@@ -201,6 +201,7 @@ def latexpand_str(latex):
 def find_root_file(directory="."):
     first_file = None
     for root, _, filenames in os.walk(directory):
+        print(filenames)
         for filename in fnmatch.filter(filenames, '*.tex'):
             path = os.path.join(root, filename)
             if not first_file:
