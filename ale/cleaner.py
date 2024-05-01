@@ -18,6 +18,7 @@ import uuid
 from tqdm import tqdm
 
 from . import ARXIV_URL
+from .arxiv import delete
 
 class ArxivCleaner:
     r""" Class for cleaning raw arxiv data. """
@@ -172,7 +173,11 @@ class ArxivCleaner:
 
                     else:
                         continue
+                    
+                    delete(tmpdir)
                     break
+
+    
 
         logging.info(f"Failed loading : {failed}")
         logging.info("done.")
@@ -200,17 +205,13 @@ def latexpand_str(latex):
 def find_root_file(directory="."):
     first_file = None
     for root, _, filenames in os.walk(directory):
-        print(filenames)
         for filename in fnmatch.filter(filenames, '*.tex'):
-            print(filename)
             path = os.path.join(root, filename)
             if not first_file:
                 first_file = path
             with open(path, 'rb') as file:
                 content = file.read()
-                print(content[:128])
                 if any(pattern in content for pattern in [rb'\documentclass', rb'\documentstyle']):
-                    print("FOUND")
                     return path
     if first_file:
         return first_file # fallback
@@ -331,6 +332,8 @@ def _tex_proj_loader(
                 except (FileNotFoundError, CalledProcessError) as e:
                     logging.error(f"{type(e).__name__}: {file_or_dir_path}")
                     return None
+        
+        delete(tmpdir)
 
     except tarfile.ReadError:
         # otherwise we try opening it as a gzip file
