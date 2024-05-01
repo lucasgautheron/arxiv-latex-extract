@@ -36,7 +36,7 @@ def process(archive, **kwargs):
     delete(archive)
     return path
 
-articles = pd.read_parquet("inspire-harvest/database/articles.parquet")[
+articles = pd.read_parquet("../quantum-gravity/inspire-harvest/database/articles.parquet")[
     ["article_id", "abstract", "categories", "title"]
 ]
 articles = articles[
