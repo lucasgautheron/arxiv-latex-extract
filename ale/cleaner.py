@@ -281,8 +281,6 @@ def create_record(
     if timestamp is not None:
         timestamp = datetime.fromtimestamp(timestamp).isoformat()
 
-    print(tex_file)
-
     return (
         {
             "text": tex_file,
