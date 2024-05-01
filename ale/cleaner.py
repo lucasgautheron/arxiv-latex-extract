@@ -24,9 +24,9 @@ class ArxivCleaner:
 
     def __init__(
             self,
-            data_dir: pathlib.Path | str,
-            work_dir: pathlib.Path | str,
-            target_dir: pathlib.Path | str,
+            data_dir: Union[pathlib.Path, str],
+            work_dir: Union[pathlib.Path,str],
+            target_dir: Union[pathlib.Path, str],
             worker_id: Optional[str] = None,
             filter_func = lambda _: True
     ):
@@ -148,6 +148,9 @@ class ArxivCleaner:
                         # get arxiv id and month from the filename
                         yymm = proj_dir_or_file.parent.stem
                         arxiv_id = proj_dir_or_file.stem
+
+                        if not self.filter_func(arxiv_id):
+                            continue
 
                         # load the tex source files (we also get the timestamp
                         # here)

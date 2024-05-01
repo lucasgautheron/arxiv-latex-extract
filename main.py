@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from datetime import datetime
 from functools import partial
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from os import sched_getaffinity
 from os.path import basename
 from shutil import copy
 from tempfile import TemporaryDirectory
 from typing import Callable
+import pandas as pd
 
 from tqdm import tqdm
 
@@ -35,12 +36,25 @@ def process(archive, **kwargs):
     delete(archive)
     return path
 
+articles = pd.read_parquet("inspire-harvest/database/articles.parquet")[
+    ["article_id", "abstract", "categories", "title"]
+]
+articles = articles[
+    articles["categories"].map(
+        lambda l: any([x in l for x in ["Astrophysics", "Phenomenology-HEP", "Theory-HEP", "Gravitation and Cosmology"]])
+    )
+]
+articles = articles[articles["arxiv"].map(len)>0]
+whitelist = articles["arxiv"].tolist()
+
+def filter_func(arxiv_id):
+    return arxiv_id in whitelist
+
 if __name__ == "__main__":
-    def filter_func(tex): return b"tikzpicture" in tex # only process projects which contain tikz
     cutoff = datetime(2010, 1, 1) # do not process papers older than 2010
 
     # Parallelize to make things faster
-    with Pool(num_workers:=len(sched_getaffinity(0))) as p:
+    with Pool(num_workers:=cpu_count()) as p:
         print(f"Parallel processing on {num_workers} workers.")
 
         # save results in a tmpdir first and copy them into LATEX_DIR only when
