@@ -53,18 +53,18 @@ def filter_func(arxiv_id):
     return arxiv_id in whitelist
 
 if __name__ == "__main__":
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
+    # root = logging.getLogger()
+    # root.setLevel(logging.DEBUG)
 
     cutoff = datetime(2000, 1, 1) # do not process papers older than 2000
 
     # Parallelize to make things faster
-    with Pool(num_workers:=1) as p:
+    with Pool(num_workers:=cpu_count()) as p:
         print(f"Parallel processing on {num_workers} workers.")
 
         # save results in a tmpdir first and copy them into LATEX_DIR only when
         # processing is finished. This avoids partial files in case of errors
-        with TemporaryDirectory(delete=False) as target_dir:
+        with TemporaryDirectory() as target_dir:
             tasks = list(download(lazy=True, cutoff=cutoff))
             kwargs = dict(filter_func=filter_func, target_dir=target_dir)
 
