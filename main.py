@@ -37,7 +37,7 @@ def process(archive, **kwargs):
     return path
 
 articles = pd.read_parquet("../quantum-gravity/inspire-harvest/database/articles.parquet")[
-    ["article_id", "arxiv"]
+    ["article_id", "categories", "arxiv"]
 ]
 articles = articles[
     articles["categories"].map(
