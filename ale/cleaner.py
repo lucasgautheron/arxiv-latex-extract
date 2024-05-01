@@ -322,10 +322,7 @@ def _tex_proj_loader(
         with tarfile.open(file_or_dir_path, "r") as sub_tf:
             sub_tf.extractall(path=tmpdir)
             try:
-                if matches(tmpdir, filter_func):
-                    file_content = latexpand(find_root_file(tmpdir))
-                else:
-                    return None
+                file_content = latexpand(find_root_file(tmpdir))
             except (FileNotFoundError, CalledProcessError) as e:
                 logging.error(f"{type(e).__name__}: {file_or_dir_path}")
                 return None
