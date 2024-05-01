@@ -202,11 +202,13 @@ def find_root_file(directory="."):
     for root, _, filenames in os.walk(directory):
         print(filenames)
         for filename in fnmatch.filter(filenames, '*.tex'):
+            print(filename)
             path = os.path.join(root, filename)
             if not first_file:
                 first_file = path
             with open(path, 'rb') as file:
                 content = file.read()
+                print(content[:128])
                 if any(pattern in content for pattern in [rb'\documentclass', rb'\documentstyle']):
                     return path
     if first_file:
