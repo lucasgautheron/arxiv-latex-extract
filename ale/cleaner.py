@@ -139,41 +139,41 @@ class ArxivCleaner:
         for tar_fp in _tar_fp_iterator():
             logging.info(f"start processing {tar_fp}")
 
-            tmpdir=self._work_dir
-            with tarfile.open(tar_fp) as tf:
-                tf.extractall(members=tf.getmembers(), path=tmpdir)
+            with TemporaryDirectory(dir=self._work_dir, delete=False) as tmpdir:
+                with tarfile.open(tar_fp) as tf:
+                    tf.extractall(members=tf.getmembers(), path=tmpdir)
 
-                for proj_dir_or_file in pathlib.Path(tmpdir).rglob("*.gz"):
+                    for proj_dir_or_file in pathlib.Path(tmpdir).rglob("*.gz"):
 
-                    # get arxiv id and month from the filename
-                    yymm = proj_dir_or_file.parent.stem
-                    arxiv_id = proj_dir_or_file.stem
+                        # get arxiv id and month from the filename
+                        yymm = proj_dir_or_file.parent.stem
+                        arxiv_id = proj_dir_or_file.stem
 
-                    if not self.filter_func(arxiv_id):
-                        print(f"skipping {arxiv_id}")
-                        continue
+                        if not self.filter_func(arxiv_id):
+                            print(f"skipping {arxiv_id}")
+                            continue
+                        else:
+                            print(f"processing {arxiv_id}")
+
+                        # load the tex source files (we also get the timestamp
+                        # here)
+                        data = _tex_proj_loader(proj_dir_or_file, self.filter_func)
+
+                        if data is None:
+                            failed += 1
+                            continue
+
+                        tex_file, timestamp = data
+                        processed += 1
+
+                        if processed > max_files > 0:
+                            break
+
+                        yield tex_file, yymm, arxiv_id, timestamp
+
                     else:
-                        print(f"processing {arxiv_id}")
-
-                    # load the tex source files (we also get the timestamp
-                    # here)
-                    data = _tex_proj_loader(proj_dir_or_file, self.filter_func)
-
-                    if data is None:
-                        failed += 1
                         continue
-
-                    tex_file, timestamp = data
-                    processed += 1
-
-                    if processed > max_files > 0:
-                        break
-
-                    yield tex_file, yymm, arxiv_id, timestamp
-
-                else:
-                    continue
-                break
+                    break
 
         logging.info(f"Failed loading : {failed}")
         logging.info("done.")
@@ -317,15 +317,15 @@ def _tex_proj_loader(
     timestamp = file_or_dir_path.lstat().st_mtime
 
     try:
-        tmpdir="./tmp"
+        with TemporaryDirectory(delete=False) as tmpdir:
         # if it is a directory, open it as a tarfile
-        with tarfile.open(file_or_dir_path, "r") as sub_tf:
-            sub_tf.extractall(path=tmpdir)
-            try:
-                file_content = latexpand(find_root_file(tmpdir))
-            except (FileNotFoundError, CalledProcessError) as e:
-                logging.error(f"{type(e).__name__}: {file_or_dir_path}")
-                return None
+            with tarfile.open(file_or_dir_path, "r") as sub_tf:
+                sub_tf.extractall(path=tmpdir)
+                try:
+                    file_content = latexpand(find_root_file(tmpdir))
+                except (FileNotFoundError, CalledProcessError) as e:
+                    logging.error(f"{type(e).__name__}: {file_or_dir_path}")
+                    return None
 
     except tarfile.ReadError:
         # otherwise we try opening it as a gzip file

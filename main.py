@@ -18,15 +18,15 @@ from ale.cleaner import ArxivCleaner
 
 def clean(archive, output, target_dir=LATEX_DIR, filter_func=lambda _: True, verbose=False):
     # create temporary work directory
-    work_dir = "./tmp"
-    arxiv_cleaner = ArxivCleaner(
-        data_dir=archive,
-        work_dir=work_dir,
-        target_dir=target_dir,
-        filter_func=filter_func
-    )
+    with TemporaryDirectory(delete=False) as work_dir:
+        arxiv_cleaner = ArxivCleaner(
+            data_dir=archive,
+            work_dir=work_dir,
+            target_dir=target_dir,
+            filter_func=filter_func
+        )
 
-    return arxiv_cleaner.run(out_fname=output, verbose=verbose)
+        return arxiv_cleaner.run(out_fname=output, verbose=verbose)
 
 def process(archive, **kwargs):
     if isinstance(archive, Callable): # handle lazy downloading
