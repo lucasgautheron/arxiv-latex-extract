@@ -37,7 +37,7 @@ def process(archive, **kwargs):
     return path
 
 articles = pd.read_parquet("../quantum-gravity/inspire-harvest/database/articles.parquet")[
-    ["article_id", "abstract", "categories", "title"]
+    ["article_id", "arxiv"]
 ]
 articles = articles[
     articles["categories"].map(
@@ -46,6 +46,7 @@ articles = articles[
 ]
 articles = articles[articles["arxiv"].map(len)>0]
 whitelist = articles["arxiv"].tolist()
+print(len(whitelist))
 
 def filter_func(arxiv_id):
     return arxiv_id in whitelist
