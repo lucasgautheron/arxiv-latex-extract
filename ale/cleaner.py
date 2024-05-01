@@ -210,6 +210,7 @@ def find_root_file(directory="."):
                 content = file.read()
                 print(content[:128])
                 if any(pattern in content for pattern in [rb'\documentclass', rb'\documentstyle']):
+                    print("FOUND")
                     return path
     if first_file:
         return first_file # fallback
