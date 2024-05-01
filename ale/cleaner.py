@@ -150,7 +150,6 @@ class ArxivCleaner:
                         arxiv_id = proj_dir_or_file.stem
 
                         if not self.filter_func(arxiv_id):
-                            print(f"skipping {arxiv_id}")
                             continue
                         else:
                             print(f"processing {arxiv_id}")
