@@ -8,6 +8,7 @@ from shutil import copy
 from tempfile import TemporaryDirectory
 from typing import Callable
 import pandas as pd
+import logging
 
 from tqdm import tqdm
 
@@ -52,7 +53,10 @@ def filter_func(arxiv_id):
     return arxiv_id in whitelist
 
 if __name__ == "__main__":
-    cutoff = datetime(2010, 1, 1) # do not process papers older than 2010
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    cutoff = datetime(2000, 1, 1) # do not process papers older than 2000
 
     # Parallelize to make things faster
     with Pool(num_workers:=cpu_count()) as p:
