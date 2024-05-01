@@ -183,7 +183,7 @@ def latexpand(tex_file_path):
     r"""
     Flatten LaTeX file by expanding \include and \input
     """
-    with NamedTemporaryFile(buffering=0) as tmp:
+    with NamedTemporaryFile(buffering=0, delete=False) as tmp:
         path, file = dirname(tex_file_path) or None, basename(tex_file_path)
         cmd = ["latexpand", "--keep-comments", file, "--output", tmp.name]
         run(cmd, cwd=path, stdout=DEVNULL, stderr=DEVNULL, check=True)
@@ -193,7 +193,7 @@ def latexpand(tex_file_path):
 
 
 def latexpand_str(latex):
-    with NamedTemporaryFile(buffering=0) as tmp:
+    with NamedTemporaryFile(buffering=0, delete=False) as tmp:
         tmp.write(latex)
         return latexpand(tmp.name)
 
