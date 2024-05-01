@@ -236,6 +236,7 @@ def format_arxiv_id(arxiv_id: str) -> str:
 
     @return: formatted arxiv id
     """
+    return arxiv_id
     match = re.search(r'^([a-zA-Z-]*)([\d\.]+)$', arxiv_id)
 
     if match is None:
