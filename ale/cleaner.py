@@ -140,7 +140,7 @@ class ArxivCleaner:
         for tar_fp in _tar_fp_iterator():
             logging.info(f"start processing {tar_fp}")
 
-            with TemporaryDirectory(dir=self._work_dir, delete=False) as tmpdir:
+            with TemporaryDirectory(dir=self._work_dir) as tmpdir:
                 with tarfile.open(tar_fp) as tf:
                     tf.extractall(members=tf.getmembers(), path=tmpdir)
 
