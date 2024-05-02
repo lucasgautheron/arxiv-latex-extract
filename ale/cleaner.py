@@ -172,6 +172,7 @@ class ArxivCleaner:
                         yield tex_file, yymm, arxiv_id, timestamp
 
                     else:
+                        delete(tmpdir)
                         continue
                     
                     delete(tmpdir)
