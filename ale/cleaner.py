@@ -328,11 +328,11 @@ def _tex_proj_loader(
                 sub_tf.extractall(path=tmpdir)
                 try:
                     file_content = latexpand(find_root_file(tmpdir))
+                    delete(tmpdir)
                 except (FileNotFoundError, CalledProcessError) as e:
                     logging.error(f"{type(e).__name__}: {file_or_dir_path}")
+                    delete(tmpdir)
                     return None
-        
-        delete(tmpdir)
 
     except tarfile.ReadError:
         # otherwise we try opening it as a gzip file
