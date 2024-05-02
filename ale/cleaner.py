@@ -356,6 +356,7 @@ def _tex_proj_loader(
         return None
 
     if tmpdir_path is not None and exists(tmpdir_path):
+        print(f"new attempt to delete {tmpdir_path}")
         delete(tmpdir_path)
 
     for idx, encoding in enumerate(encodings:=["utf-8", "latin1"]):
