@@ -324,6 +324,7 @@ def _tex_proj_loader(
     """
     timestamp = file_or_dir_path.lstat().st_mtime
 
+    file_content = None
     tmpdir_path = None
 
     try:
@@ -339,7 +340,6 @@ def _tex_proj_loader(
                 except (FileNotFoundError, CalledProcessError) as e:
                     logging.error(f"{type(e).__name__}: {file_or_dir_path}")
                     delete(tmpdir)
-                    return None
 
     except tarfile.ReadError:
         # otherwise we try opening it as a gzip file
@@ -349,15 +349,16 @@ def _tex_proj_loader(
         except Exception as e:
             # all fails, we skip this file
             logging.error(f"{type(e).__name__}: {file_or_dir_path}")
-            return None
 
     except Exception as e:
         logging.error(f"{type(e).__name__}: {file_or_dir_path}")
-        return None
 
     if tmpdir_path is not None and exists(tmpdir_path):
         print(f"new attempt to delete {tmpdir_path}")
         delete(tmpdir_path)
+
+    if file_content is None:
+        return None
 
     for idx, encoding in enumerate(encodings:=["utf-8", "latin1"]):
         try:
