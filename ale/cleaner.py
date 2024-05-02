@@ -6,7 +6,7 @@ import json
 import logging
 import lzma
 import os
-from os.path import basename, dirname
+from os.path import basename, dirname, exists
 import pathlib
 import re
 from subprocess import CalledProcessError, DEVNULL, run
@@ -324,8 +324,12 @@ def _tex_proj_loader(
     """
     timestamp = file_or_dir_path.lstat().st_mtime
 
+    tmpdir_path = None
+
     try:
         with TemporaryDirectory() as tmpdir:
+            tmpdir_path = str(tmpdir)
+
         # if it is a directory, open it as a tarfile
             with tarfile.open(file_or_dir_path, "r") as sub_tf:
                 sub_tf.extractall(path=tmpdir)
@@ -350,6 +354,9 @@ def _tex_proj_loader(
     except Exception as e:
         logging.error(f"{type(e).__name__}: {file_or_dir_path}")
         return None
+
+    if tmpdir_path is not None and exists(tmpdir_path):
+        delete(tmpdir_path)
 
     for idx, encoding in enumerate(encodings:=["utf-8", "latin1"]):
         try:
