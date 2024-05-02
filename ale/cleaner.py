@@ -323,7 +323,7 @@ def _tex_proj_loader(
     timestamp = file_or_dir_path.lstat().st_mtime
 
     try:
-        with TemporaryDirectory(delete=False) as tmpdir:
+        with TemporaryDirectory() as tmpdir:
         # if it is a directory, open it as a tarfile
             with tarfile.open(file_or_dir_path, "r") as sub_tf:
                 sub_tf.extractall(path=tmpdir)
