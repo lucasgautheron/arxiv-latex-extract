@@ -203,7 +203,7 @@ def latexpand_str(latex):
         return latexpand(tmp.name)
 
 
-def find_root_file(directory="."):
+def find_root_file(directory):
     first_file = None
     for root, _, filenames in os.walk(directory):
         for filename in fnmatch.filter(filenames, '*.tex'):
@@ -216,6 +216,8 @@ def find_root_file(directory="."):
                     return path
     if first_file:
         return first_file # fallback
+    
+    delete(directory)
     raise FileNotFoundError
 
 
