@@ -198,9 +198,10 @@ def latexpand(tex_file_path):
 
 
 def latexpand_str(latex):
-    with NamedTemporaryFile(buffering=0, delete=False) as tmp:
+    with NamedTemporaryFile(buffering=0) as tmp:
         tmp.write(latex)
-        return latexpand(tmp.name)
+        ltx = latexpand(tmp.name)
+        return ltx
 
 
 def find_root_file(directory):
