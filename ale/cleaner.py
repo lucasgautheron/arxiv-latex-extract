@@ -151,6 +151,7 @@ class ArxivCleaner:
                         arxiv_id = proj_dir_or_file.stem
 
                         if not self.filter_func(arxiv_id):
+                            delete(proj_dir_or_file)
                             continue
                         else:
                             print(f"processing {arxiv_id}")
@@ -158,6 +159,7 @@ class ArxivCleaner:
                         # load the tex source files (we also get the timestamp
                         # here)
                         data = _tex_proj_loader(proj_dir_or_file, self.filter_func)
+                        delete(proj_dir_or_file)
 
                         if data is None:
                             failed += 1
