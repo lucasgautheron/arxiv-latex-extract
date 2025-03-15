@@ -46,6 +46,7 @@ articles = articles[
     )
 ]
 articles = articles[articles["arxiv"].map(len)>0]
+articles["arxiv"] = articles["arxiv"].str.replace("/", "")
 whitelist = articles["arxiv"].tolist()
 print(len(whitelist))
 
